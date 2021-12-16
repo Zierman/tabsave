@@ -275,7 +275,9 @@ class GameSave:
                 self.name = name
                 self._label = label
                 self._get_value_callable = get_value_callable
-                self.max_column_width = max((len(label), *(len(get_value_callable(b)) for b in backups)))
+                self.max_column_width = max((len(label), *(len(get_value_callable(b)) for b
+                                                           in backups if get_value_callable(b) is not None)))
+
                 self.included = included
 
             def get_label(self, *, centered=False):
@@ -284,12 +286,20 @@ class GameSave:
                 else:
                     return f'{self._label:{self.max_column_width}}'
 
+            def _get_value(self, b: Backup):
+                val_str = self._get_value_callable(b)
+                if val_str is not None:
+                    return f'{val_str:{self.max_column_width}}'
+                else:
+                    return None
+
             def get_value(self, b: Backup):
-                return f'{self._get_value_callable(b):{self.max_column_width}}'
+                s = self._get_value(b)
+                return s if s is not None else '-------'.center(self.max_column_width)
 
         fields = (_Field('number', 'Number', lambda b: f'{b.number}', True),
                   _Field('path', 'Path_to_Directory', lambda b: f'"{b.dir}"', include_path),
-                  _Field('message', 'Message', lambda b: f'{b.message if b.message is not None else "-------"}',
+                  _Field('message', 'Message', lambda b: f'{b.message}' if b.message is not None else None,
                          include_message))
         fields = tuple(field for field in fields if field.included)
 
