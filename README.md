@@ -7,7 +7,7 @@ testing game mechanics as well as content creators.
 Generally I would recommend most people play the game without this tool. 
 
 This software makes backing up and restoring save files very easy and convenient when compared to doing it manually, 
-but it doesn't do anything you can't manually accomplish using file explorer.
+but it doesn't do anything you can't manually.
 
 That said, using backups to circumvent the intentional save mechanics in They Are Billions is without question cheating.
 
