@@ -2,7 +2,8 @@
 Save file backup utility for the game They Are Billions
 
 ## A Word About Cheating
-When I designed this software and decided to make it open source, I envisioned it being useful for testing and content creators.
+When I designed this software and decided to make it open source, I envisioned it being useful for anyone interested in 
+testing game mechanics as well as content creators.
 Generally I would recommend most people play the game without this tool. 
 
 This software makes backing up and restoring save files very easy and convenient when compared to doing it manually, 
