@@ -50,7 +50,8 @@ Otherwise, just replace `tabsave` with `python3 "C:\Users\<username>\tabsave\tab
 ### Backup
 Create a backup of a specified save file.    
 *Note: To manually trigger the game to save you must exit the current game before running this command.*
-#### default mode
+
+#### Default Mode
 The default mode is to create a backup. 
 This means that if you only provide the save name the program will try to create a backup.
 
