@@ -247,7 +247,7 @@ will output something like this:
 ### Delete
 
 #### Delete a Specific Save's Backups
-If you need to delete all the backups for a specific save file, use the `--delete` option
+If you need to delete all the backups for a specific save file, use the `--delete` option.
 
 Example: 
 ```commandline
