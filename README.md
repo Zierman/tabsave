@@ -56,7 +56,7 @@ Create a backup of a specified save file.
 
 #### Default Mode
 The default mode is to create a backup. 
-This means that if you only provide the save name the program will try to create a backup.
+This means that if you only provide the save name, the program will try to create a backup.
 
 To back up a save named `Survival1` simply run the following:  
 ```commandline
