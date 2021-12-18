@@ -47,6 +47,9 @@ The following are going to assume you mannage to get things set up to run like a
 Otherwise, just replace `tabsave` with `python3 "C:\Users\<username>\tabsave\tabsave.py"` replacing 
 `"C:\Users\<username>\tabsave\tabsave.py"`with the absolute path to the tabsave python file.
 
+### Help
+To get a help message use the `-h` or `--help` option.
+
 ### Backup
 Create a backup of a specified save file.    
 *Note: To manually trigger the game to save you must exit the current game before running this command.*
