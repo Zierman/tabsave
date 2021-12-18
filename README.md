@@ -244,6 +244,7 @@ will output something like this:
 
 #### Delete a Specific Save's Backups
 If you need to delete all the backups for a specific save file, use the `--delete` option
+
 Example: 
 ```commandline
 tabsave Survival1 --delete
