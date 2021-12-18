@@ -237,3 +237,35 @@ will output something like this:
 *                                *
 **********************************
 ```
+
+
+
+### Delete
+
+#### Delete a Specific Save's Backups
+If you need to delete all the backups for a specific save file, use the `--delete` option
+Example: 
+```commandline
+tabsave Survival1 --delete
+```
+
+[comment]: <> (#### Delete specified backups)
+
+[comment]: <> (If you wish to only delete a subset of the save's backups, use the `-n` option.)
+
+[comment]: <> (Example - Delete backup 1: )
+
+[comment]: <> (```commandline)
+
+[comment]: <> (tabsave Survival1 --delete -n 1)
+
+[comment]: <> (```)
+
+[comment]: <> (Example - Delete backup 1 and 3: )
+
+[comment]: <> (```commandline)
+
+[comment]: <> (tabsave Survival1 --delete -n 1 -n 3)
+
+[comment]: <> (```)
+
