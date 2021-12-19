@@ -15,7 +15,7 @@ If you don't want to cheat, then don't use this software.
 
 ## Installation
 
-### Prerequisits
+### Prerequisites
 
 #### Windows 11 (others might work)
 This software was designed for and tested on Windows 11. It is very likely that this software will function just fine on 
@@ -32,7 +32,8 @@ insignificant.
 ### Make tabsave Command (optional)
 The goal with this step is to make using the command as easy as possible from the command line. 
 
-This is nice if you would rather type `tabsave Survival1` instead of `python3 "C:\Users\<username>\tabsave\tabsave.py" Survival1`
+This is nice if you would rather type `tabsave Survival1` instead of 
+`python3 "C:\Users\<username>\tabsave\tabsave.py" Survival1`
 
 There are a number of ways to accomplish this. You could create an alias, a function, create a script (or batch file) 
 in your `bin` directory, or add the directory where you saved the script to your `Path` environment variable 
@@ -180,7 +181,7 @@ Number                          Path_to_Directory
 ```
 
 ### List All Saves
-You may want to list all saves. You can acheave this with the `-L` or `-list-all` option. 
+You may want to list all saves. You can achieve this with the `-L` or `-list-all` option. 
 
 Example:
 ```commandline
