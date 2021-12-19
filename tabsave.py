@@ -11,7 +11,6 @@ import yaml
 
 MAX_FILENAME_LENGTH = 30
 
-
 def _can_expand_to_match(abr: str, target: str):
     can_expand_to_match = False
     if len(abr) <= len(target):
@@ -66,6 +65,13 @@ class SingletonError(RuntimeError):
 class Config:
     _instance = None
 
+    config_path = Path.home() / '.tabsave' / 'tabsave_config.yml'
+
+    @classmethod
+    def _test_setup(cls, config_path: Path):
+        cls.config_path = config_path
+        cls._instance = None
+
     @classmethod
     def instance(cls):
         if Config._instance is None:
@@ -75,10 +81,10 @@ class Config:
     def __init__(self):
         if Config._instance:
             raise SingletonError(Config, Config._instance)
-        config_dir = Path.home() / '.tabsave'
+        config_dir = self.config_path.parent
         if not config_dir.exists():
             config_dir.mkdir(parents=True)
-        config_path = config_dir / 'tabsave_config.yml'
+        config_path = self.config_path
         if not config_path.exists():
             with open(config_path, 'w') as cfg_file:
                 path = None
@@ -93,7 +99,7 @@ class Config:
         self.save_dir = Path(cfg['save_dir'])
 
 
-def get_save_dir() -> Path:
+def get_save_dir(*args) -> Path:
     d = Config.instance().save_dir
     if not d.is_dir():
         raise NotADirectoryError(f'{d} is not a directory.')
@@ -102,7 +108,9 @@ def get_save_dir() -> Path:
 
 def get_backup_root_dir() -> Path:
     d = Config.instance().save_dir / 'backups'
-    if not d.is_dir():
+    if not d.exists():
+        d.mkdir(parents=True)
+    elif not d.is_dir():
         raise NotADirectoryError(f'{d} is not a directory.')
     return d
 
@@ -186,14 +194,14 @@ class Backup:
 
 
 class GameSave:
-    save_dir = get_save_dir()
+    save_dir = get_save_dir
 
     def __init__(self, name: str):
 
         if not name or not isinstance(name, str):
             raise ValueError(f'name must be a non-empty string')
-        if not GameSave.save_dir.is_dir():
-            raise NotADirectoryError(f'{self.save_dir} is not a directory.')
+        if not GameSave.save_dir().is_dir():
+            raise NotADirectoryError(f'{self.save_dir()} is not a directory.')
 
         self.backup_base_dir: Path = get_backup_root_dir() / name
         _mkdir_if_needed(self.backup_base_dir)
@@ -239,7 +247,7 @@ class GameSave:
             backup = Backup(self.backup_base_dir / f'{dir_name}', message)
         else:
             backup = Backup(self.backup_base_dir / f'{n}')
-        self._copy_all(self.save_dir, backup)
+        self._copy_all(self.save_dir(), backup)
 
     def restore(self, n: Optional[int] = None):
         if n is None:  # check for next integer starting with 1 if none found
@@ -248,10 +256,10 @@ class GameSave:
                 raise NotADirectoryError(f'No backup directories found.')
         if n != 0:
             # create a temporary backup of the active save files in case this is used on accident. The temp index is 0.
-            self._copy_all(self.save_dir, self.backup_base_dir / '0')
+            self._copy_all(self.save_dir(), self.backup_base_dir / '0')
 
         # restore the backup.
-        self._copy_all(self.backup_base_dir / f'{n}', self.save_dir)
+        self._copy_all(self.backup_base_dir / f'{n}', self.save_dir())
 
     def get_list(self,
                  verbose: Optional[bool] = None,
