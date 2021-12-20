@@ -27,7 +27,7 @@ other systems, but more testing is needed.
 To run the software you will need to have Python 3 installed. 
 I designed the software to run on Python 3.7+. 
 
-###Clone the Repository or Download the Files
+### Clone the Repository or Download the Files
 At the moment the only file that is needed to run the program is the `tabsave.py` file. Where you save/clone is 
 insignificant.
 
