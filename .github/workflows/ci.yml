@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.6', '3.7', '3.8', 'pypy-2.7', 'pypy-3.6']
+        python-version: ['3.7', '3.8']
 #         exclude:
 #           - os: macos-latest
 #             python-version: '3.8'
@@ -44,16 +44,12 @@ jobs:
         python-version: ['3.6', '3.7', '3.8', 'pypy-2.7', 'pypy-3.6']
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'pip'
           
       - name: Run Unit Tests
         run: python -m unittest discover .
         
       - name: Run Behave Tests
-        run: behave --version
+        run: behave
    
           
       
