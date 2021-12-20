@@ -10,6 +10,7 @@ from typing import Optional, Union, Callable, overload
 import yaml
 
 MAX_FILENAME_LENGTH = 30
+"""The maximum allowed length of backup file name with message."""
 
 def _can_expand_to_match(abr: str, target: str):
     can_expand_to_match = False
