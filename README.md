@@ -18,12 +18,14 @@ If you don't want to cheat, then don't use this software.
 ### Prerequisites
 
 #### Windows 11 (others might work)
-This software was designed for and tested on Windows 11. It is very likely that this software will function just fine on 
-other systems, but thus far it hasn't been tested. 
+This program was originally written to work on Windows 11. 
+We're working on testing other operating systems, and wish to make the program as portable as possible.
+It is very likely that this software will function just fine on 
+other systems, but more testing is needed.
 
 #### Python 3
 To run the software you will need to have Python 3 installed. 
-I designed the software to run on Python 3.9, but you may find that it runs on some older versions of Python 3. 
+I designed the software to run on Python 3.7+. 
 
 ###Clone the Repository or Download the Files
 At the moment the only file that is needed to run the program is the `tabsave.py` file. Where you save/clone is 
