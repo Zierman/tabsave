@@ -1,4 +1,4 @@
-# tabsave
+# tabsave [![CI](https://github.com/Zierman/tabsave/actions/workflows/ci.yml/badge.svg)](https://github.com/Zierman/tabsave/actions/workflows/ci.yml)
 Save file backup utility for the game They Are Billions
 
 ## A Word About Cheating
