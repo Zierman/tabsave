@@ -1,3 +1,4 @@
+@wip
 @config_setup_test
 Feature: Setup
 The first time the program is executed it sets up everything it needs.
