@@ -12,6 +12,7 @@ import yaml
 MAX_FILENAME_LENGTH = 30
 CONFIG_FILE_NAME = 'tabsave_config.yml'
 
+
 def _can_expand_to_match(abr: str, target: str) -> bool:
     """Returns True if abr is an abbreviation of the target or is equal to the target"""
     can_expand_to_match = False
@@ -68,6 +69,7 @@ def _can_parse_to_int(s: str):
 
 class SingletonError(RuntimeError):
     """An Error to be thrown if trying to create a second instance of a singleton class."""
+
     def __init__(self, cls, instance, *args):
         """ Initializes the error.
 
@@ -452,92 +454,102 @@ def main(args=None) -> int:
     # set up and parse arguments
     p = argparse.ArgumentParser(description='This tool allows a user to backup or restore a save from the game '
                                             'They Are Billions.')
-    p.save_choice_group = p.add_mutually_exclusive_group()
-    p.normal_group = p.save_choice_group.add_argument_group()
+    subparsers = p.add_subparsers(help='The command to be executed.')
 
-    if not any(no_name_arg in args for no_name_arg in ('-L', '--list-all', '--delete-all')):
-        p.normal_group.add_argument('name', help='The name of the save')
+    # set up the subparser for backing up a game file
+    def backup_action(args):
+        GameSave(args.name).backup(args.n, args.message)
 
-    p.mode_group = p.normal_group.add_mutually_exclusive_group()
-    p.output_group = p.add_mutually_exclusive_group()
+    backup_parser = subparsers.add_parser('backup', aliases=['b'],
+                                          help='Backup active file.')
+    backup_parser.set_defaults(func=backup_action)
+    backup_parser.add_argument('name', help='The name of the game-save.')
+    backup_parser.add_argument('-n',
+                               type=int,
+                               default=None,
+                               help='The index to use when creating the backup (do not use 0). '
+                                    'Defaults to one greater than the largest index found.')
+    backup_parser.add_argument('-m', '--message',
+                               help='Declares a message to accompany the backup.')
 
-    p.mode_group.add_argument('-b', '--backup',
-                              action='store_true',
-                              help='Backup active file. [DEFAULT_MODE]')
+    # set up the subparser for restoring a game file
+    def restore_action(args):
+        # TODO uncomment after implementing restore by message enhancement
+        # GameSave(args.save_name).backup(args.n, args.message)
+        GameSave(args.save_name).backup(args.n)  # TODO remove line when uncommenting the above line
 
-    p.mode_group.add_argument('-r', '--restore',
-                              action='store_true',
-                              help='Restore backup fail.')
+    restore_parser = subparsers.add_parser('restore', aliases=['r'], help='Restore backup from backup.')
+    restore_parser.set_defaults(func=restore_action)
+    restore_parser.mutex = restore_parser.add_mutually_exclusive_group()
+    restore_parser.add_argument('name', help='The name of the game-save.')
+    restore_parser.mutex.add_argument('-n', help='The index of the backup. Defaults to the largest index found).')
 
-    p.mode_group.add_argument('-l', '--list',
-                              action='store_true',
-                              help='Lists all backups for particular save.')
+    # TODO uncomment after implementing restore by message enhancement
+    # restore_parser.mutex.add_argument('-m', '--message', help='Restores the backup with the provided message. '
+    #                                                           'Will restore the highest indexed match if multiple '
+    #                                                           'matches exist.')
 
-    p.save_choice_group.add_argument('-L', '--list-all',
-                                     action='store_true',
-                                     help='Lists all backups for all saves.')
+    # set up the subparser for listing backups
+    def list_action(args):
+        GameSave(args.name).list(verbose=args.verbose,
+                                 include_path=args.path,
+                                 include_message=args.message)
 
-    p.mode_group.add_argument('--delete',
-                              action='store_true',
-                              help='Deletes all backups for the save.')
+    list_parser = subparsers.add_parser('list', aliases=['l'], help='list backups.')
+    list_parser.set_defaults(func=list_action)
+    list_parser.add_argument('name', help='The name of the game-save.')
+    list_parser.add_argument('-v', '--verbose',
+                             action='store_true',
+                             help='Will output a message if no results are found rather than outputting nothing.')
+    list_parser.add_argument('-p', '--path',
+                             action='store_true',
+                             help='Display paths.')
+    list_parser.add_argument('-m', '--message',
+                             action='store_true',
+                             help='Display messages.')
 
-    p.save_choice_group.add_argument('--delete-all',
-                                     action='store_true',
-                                     help='Deletes all backups for all saves.')
-
-    p.add_argument('-n',
-                   type=int,
-                   help='The index to use. Will save to new index or restore greatest index if not specified.')
-
-    p.add_argument('-p', '--path',
-                   action='store_true',
-                   help='Used to include path in listings.')
-
-    p.add_argument('-y', '--auto-confirm',
-                   action='store_true',
-                   help='When used all confirmation dialogs will be auto completed.')
-
-    if any(help_arg in args for help_arg in ('-h', '--help')):
-        p.add_argument('-m', '--message',
-                       help='Includes message in list or declair a message when creating a backup.')
-    elif any(list_arg in args for list_arg in ('-L', '--list-all', '-l', '--list')):
-        p.add_argument('-m', '--message',
-                       action='store_true',
-                       help='Includes message in list.')
-    else:
-        p.add_argument('-m', '--message',
-                       help='Used to provide a message.')
-
-    p.output_group.add_argument('-v', '--verbose',
-                                action='store_true',
-                                help='Outputs more information.')
-
-    args = p.parse_args(args)
-
-    # extract args
-    n = args.n
-    auto_confirm = args.auto_confirm
-
-    if args.delete_all:
-        delete_all()
-    elif args.list_all:
+    # set up the subparser for listing all saves
+    def list_all_action(args):
         list_all(verbose=args.verbose,
                  include_path=args.path,
                  include_message=args.message)
-    else:
-        game_save = GameSave(args.name)
 
-        # run the program according to the specified mode.
-        if args.list:
-            game_save.list(verbose=args.verbose,
-                           include_path=args.path,
-                           include_message=args.message)
-        elif args.restore:
-            game_save.restore(n)
-        elif args.delete:
-            game_save.delete(require_confirmation=not auto_confirm)
-        else:
-            game_save.backup(n, args.message)
+    list_all_parser = subparsers.add_parser('list-all', aliases=['L'],
+                                            help='list all saves and how many backups in each save.')
+    list_all_parser.set_defaults(func=list_all_action)
+    list_all_parser.add_argument('-v', '--verbose',
+                                 action='store_true',
+                                 help='Will display the list output for each save.')
+    list_all_parser.add_argument('-p', '--path',
+                                 action='store_true',
+                                 help='Display paths.')
+    list_all_parser.add_argument('-m', '--message',
+                                 action='store_true',
+                                 help='Display messages.')
+
+    # set up the subparser for deleting
+    def delete_action(args):
+        GameSave(args.save).delete(require_confirmation=not args.auto_confirm)
+
+    delete_parser = subparsers.add_parser('delete',
+                                          help='deletes all backups for specified game-save.')
+    delete_parser.set_defaults(func=delete_action)
+    delete_parser.add_argument('name', help='The name of the game-save.')
+    delete_parser.add_argument('-y', '--auto-confirm',
+                               action='store_true',
+                               help='When used all confirmation dialogs will be auto completed.')
+
+    # set up the subparser for deleting
+    def delete_all_action(args):
+        delete_all()
+
+    delete_parser = subparsers.add_parser('delete-all',
+                                          help='Deletes all backups.')
+    delete_parser.set_defaults(func=delete_all_action)
+
+    args = p.parse_args(args)
+
+    args.func(args)
     return 0
 
 
