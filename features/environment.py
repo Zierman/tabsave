@@ -5,7 +5,7 @@ import subprocess
 import sys
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import List, Dict, Tuple, Callable, Protocol
+from typing import Dict, Tuple, Callable
 
 import tabsave
 
@@ -79,7 +79,6 @@ def before_all(context):
 
 
 def before_scenario(context, scenario):
-
     # change the config path to a test location
     tabsave.Config._test_setup(CONFIG_FILE_PATH)
 
