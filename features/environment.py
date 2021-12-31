@@ -68,11 +68,11 @@ class Runnable:
 
 def before_all(context):
     # setup context
-    context.my_results = []
+    context.results = []
 
     def _add_result(r: Runnable):
         result = r()
-        context.my_results.append(result)
+        context.results.append(result)
         return result
 
     context.add_result = _add_result
@@ -83,7 +83,7 @@ def before_scenario(context, scenario):
     tabsave.Config._test_setup(CONFIG_FILE_PATH)
 
     # setup context
-    context.my_results = []
+    context.results = []
 
     # create the test game save directory
     TEST_GAME_SAVE_DIR.mkdir(parents=True, exist_ok=True)
@@ -171,4 +171,4 @@ def get_argument_list(raw_str: str) -> Tuple[str]:
 
 
 def get_next_run_result(context) -> RunResult:
-    return context.my_results.pop(0)
+    return context.results.pop(0)
