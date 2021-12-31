@@ -10,7 +10,7 @@ from typing import Optional, Union, Callable, overload
 import yaml
 
 MAX_FILENAME_LENGTH = 30
-
+CONFIG_FILE_NAME = 'tabsave_config.yml'
 
 def _can_expand_to_match(abr: str, target: str) -> bool:
     """Returns True if abr is an abbreviation of the target or is equal to the target"""
@@ -88,7 +88,7 @@ class Config:
     """A singleton class that allows configuration information to be saved to and loaded from file."""
     _instance = None
 
-    config_path = Path.home() / '.tabsave' / 'tabsave_config.yml'
+    config_path: Path = Path.home() / '.tabsave' / 'tabsave_config.yml'
 
     @classmethod
     def _test_setup(cls, config_path: Path):
@@ -109,20 +109,24 @@ class Config:
             raise SingletonError(Config, Config._instance)
 
         # make the config directory if needed
-        config_dir = Path.home() / '.tabsave'
+        config_dir = Config.config_path.parent
         _mkdir_if_needed(config_dir)
 
         # create the config file if needed
-        config_path = config_dir / 'tabsave_config.yml'
+        config_path = config_dir / CONFIG_FILE_NAME
         if not config_path.exists():
             with open(config_path, 'w') as cfg_file:
-                path = None
-                while path is None:
-                    path = input('We need to know the absolute path to hey Are Billions save directory.\nPath: ')
-                    if not Path(path).is_dir():
+                path_str = None
+                while path_str is None:
+                    path_str = input('We need to know the absolute path to hey Are Billions save directory.\nPath: ')
+                    path = Path(path_str)
+                    if not path.is_dir():
                         print('That was not a directory... try again.')
-                        path = None
-                cfg_file.write(f'save_dir: {path}\n')
+                        path_str = None
+                    elif not path.is_absolute():
+                        print('The path was not absolute... try again.')
+                        path_str = None
+                cfg_file.write(f'save_dir: {path_str}\n')
 
         # read the config file and store the information.
         with open(config_path, 'r') as cfg_file:
@@ -283,7 +287,7 @@ class GameSave:
             backup = Backup(self.backup_base_dir / f'{dir_name}', message)
         else:
             backup = Backup(self.backup_base_dir / f'{n}')
-        self._copy_all(self.save_dir(), backup)
+        self._copy_all(GameSave.save_dir(), backup)
 
     def restore(self, n: Optional[int] = None):
         if n is None:  # check for next integer starting with 1 if none found
