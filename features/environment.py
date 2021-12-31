@@ -2,14 +2,16 @@ import pathlib
 import random
 import shutil
 import subprocess
+import sys
+from abc import abstractmethod
 from dataclasses import dataclass
-from typing import List, Dict, Tuple, Callable
+from typing import List, Dict, Tuple, Callable, Protocol
 
 import tabsave
 
 TEST_ROOT_DIR = pathlib.Path.home() / '.tabsave_test'
 TEST_GAME_SAVE_DIR = TEST_ROOT_DIR / 'They Are Billions' / 'Saves'
-CONFIG_FILE_PATH = TEST_ROOT_DIR / 'config.yml'
+CONFIG_FILE_PATH = TEST_ROOT_DIR / tabsave.CONFIG_FILE_NAME
 
 
 class RunResult:
@@ -65,32 +67,35 @@ class Runnable:
 
 
 def before_all(context):
-    # change the config path to a test location
-    tabsave.Config._test_setup(CONFIG_FILE_PATH)
-
     # setup context
-    context.results = []
+    context.my_results = []
 
     def _add_result(r: Runnable):
         result = r()
-        context.results.append(result)
+        context.my_results.append(result)
         return result
 
     context.add_result = _add_result
 
 
 def before_scenario(context, scenario):
+
+    # change the config path to a test location
+    tabsave.Config._test_setup(CONFIG_FILE_PATH)
+
     # setup context
-    context.results = []
+    context.my_results = []
 
     # create the test game save directory
     TEST_GAME_SAVE_DIR.mkdir(parents=True, exist_ok=True)
 
     # create config file if we are not testing its creation
     if 'config_setup_test' not in scenario.tags:
+        config_dir_path_str = TEST_GAME_SAVE_DIR.resolve()
+
         # create the config file
         with open(CONFIG_FILE_PATH, 'w') as file:
-            file.write(f'save_dir: {TEST_GAME_SAVE_DIR.resolve()}\n')
+            file.write(f'save_dir: {config_dir_path_str}\n')
 
 
 def after_scenario(context, feature):
@@ -118,6 +123,7 @@ def create_game_save(save_name: str, create_backupzx_files=False) -> Dict[pathli
         d[path] = random_int
         with open(path, 'w') as file:
             file.write(f"{save_name} - {random_int}\n")
+    return d
 
 
 def remove_game_saves(save_name: str):
@@ -166,4 +172,4 @@ def get_argument_list(raw_str: str) -> Tuple[str]:
 
 
 def get_next_run_result(context) -> RunResult:
-    return context.results.pop(0)
+    return context.my_results.pop(0)
