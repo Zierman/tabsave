@@ -10,8 +10,10 @@ from typing import Optional, Union, Callable, overload
 import yaml
 
 MAX_FILENAME_LENGTH = 30
+CONFIG_FILE_NAME = 'tabsave_config.yml'
 
-def _can_expand_to_match(abr: str, target: str):
+def _can_expand_to_match(abr: str, target: str) -> bool:
+    """Returns True if abr is an abbreviation of the target or is equal to the target"""
     can_expand_to_match = False
     if len(abr) <= len(target):
         can_expand_to_match = True
@@ -21,7 +23,8 @@ def _can_expand_to_match(abr: str, target: str):
     return can_expand_to_match
 
 
-def _yn_input(prompt: str, repeat_prompt=None, allow_none=False):
+def _yn_input(prompt: str, repeat_prompt=None, allow_none=False) -> Optional[str]:
+    """ Asks a yes or no question and returns 'y' if the user answered yes, or 'n' if the user entered no."""
     answer = input(prompt).strip().lower()
     if _can_expand_to_match(answer, 'yes'):
         return 'y'
@@ -37,14 +40,25 @@ def _yn_input(prompt: str, repeat_prompt=None, allow_none=False):
         return _yn_input(repeat_prompt, repeat_prompt, allow_none)
 
 
-def _mkdir_if_needed(dir: Path):
-    if not dir.exists():
-        dir.mkdir(parents=True, exist_ok=True)
-    elif not dir.is_dir():
-        raise NotADirectoryError(f'{dir} is not a directory.')
+def _mkdir_if_needed(path: Path) -> None:
+    """ Makes a directory if needed
+
+    Args:
+        path: the path to the directory
+
+    Returns: None
+
+    Raises: NotADirectoryError if the path is not for a directory.
+
+    """
+    if not path.exists():
+        path.mkdir(parents=True, exist_ok=True)
+    elif not path.is_dir():
+        raise NotADirectoryError(f'{path} is not a directory.')
 
 
-def _can_parse_to_int(s):
+def _can_parse_to_int(s: str):
+    """Checks if the string can be parsed to an int."""
     try:
         int(s)
         return True
@@ -53,7 +67,15 @@ def _can_parse_to_int(s):
 
 
 class SingletonError(RuntimeError):
+    """An Error to be thrown if trying to create a second instance of a singleton class."""
     def __init__(self, cls, instance, *args):
+        """ Initializes the error.
+
+        Args:
+            cls: The class of the singleton.
+            instance: The instance of the singleton that may be accessed in an except block.
+            *args: any other arguments that will be passed to the super's __init__ method.
+        """
         self.singleton_class = cls
         self.singleton_instance = instance
         if args:
@@ -63,9 +85,10 @@ class SingletonError(RuntimeError):
 
 
 class Config:
+    """A singleton class that allows configuration information to be saved to and loaded from file."""
     _instance = None
 
-    config_path = Path.home() / '.tabsave' / 'tabsave_config.yml'
+    config_path: Path = Path.home() / '.tabsave' / 'tabsave_config.yml'
 
     @classmethod
     def _test_setup(cls, config_path: Path):
@@ -73,33 +96,46 @@ class Config:
         cls._instance = None
 
     @classmethod
-    def instance(cls):
+    def instance(cls) -> Config:
+        """Gets the instance of the class or creates one if needed."""
         if Config._instance is None:
             Config._instance = Config()
         return Config._instance
 
     def __init__(self):
+
+        # enforce singleton behaviour
         if Config._instance:
             raise SingletonError(Config, Config._instance)
-        config_dir = self.config_path.parent
-        if not config_dir.exists():
-            config_dir.mkdir(parents=True)
-        config_path = self.config_path
+
+        # make the config directory if needed
+        config_dir = Config.config_path.parent
+        _mkdir_if_needed(config_dir)
+
+        # create the config file if needed
+        config_path = config_dir / CONFIG_FILE_NAME
         if not config_path.exists():
             with open(config_path, 'w') as cfg_file:
-                path = None
-                while path is None:
-                    path = input('We need to know the absolute path to hey Are Billions save directory.\nPath: ')
-                    if not Path(path).is_dir():
+                path_str = None
+                while path_str is None:
+                    path_str = input('We need to know the absolute path to hey Are Billions save directory.\nPath: ')
+                    path = Path(path_str)
+                    if not path.is_dir():
                         print('That was not a directory... try again.')
-                        path = None
-                cfg_file.write(f'save_dir: {path}\n')
+                        path_str = None
+                    elif not path.is_absolute():
+                        print('The path was not absolute... try again.')
+                        path_str = None
+                cfg_file.write(f'save_dir: {path_str}\n')
+
+        # read the config file and store the information.
         with open(config_path, 'r') as cfg_file:
             cfg = yaml.safe_load(cfg_file)
         self.save_dir = Path(cfg['save_dir'])
 
 
-def get_save_dir(*args) -> Path:
+def get_save_dir() -> Path:
+    """Gets the path to the save directory."""
     d = Config.instance().save_dir
     if not d.is_dir():
         raise NotADirectoryError(f'{d} is not a directory.')
@@ -107,6 +143,7 @@ def get_save_dir(*args) -> Path:
 
 
 def get_backup_root_dir() -> Path:
+    """Gets the path to the shallowest backup directory."""
     d = Config.instance().save_dir / 'backups'
     if not d.exists():
         d.mkdir(parents=True)
@@ -116,11 +153,13 @@ def get_backup_root_dir() -> Path:
 
 
 class InvalidBackupDirectoryNameError(ValueError):
+    """An error to be raised if the backup directory name is invalid."""
     ...
 
 
 @total_ordering
 class Backup:
+    """A class that represents an individual backup object."""
     _yaml_extractables = ['message']
     metadata_filename = 'metadata.yml'
 
@@ -138,6 +177,7 @@ class Backup:
 
     @property
     def yaml_path(self) -> Path:
+        """The path to the backup's yaml metadata file."""
         return self.dir / Backup.metadata_filename
 
     def _set_attributes_from_yaml(self) -> None:
@@ -247,7 +287,7 @@ class GameSave:
             backup = Backup(self.backup_base_dir / f'{dir_name}', message)
         else:
             backup = Backup(self.backup_base_dir / f'{n}')
-        self._copy_all(self.save_dir(), backup)
+        self._copy_all(GameSave.save_dir(), backup)
 
     def restore(self, n: Optional[int] = None):
         if n is None:  # check for next integer starting with 1 if none found
