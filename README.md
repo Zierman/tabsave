@@ -1,4 +1,4 @@
-# tabsave
+# tabsave [![CI](https://github.com/Zierman/tabsave/actions/workflows/ci.yml/badge.svg)](https://github.com/Zierman/tabsave/actions/workflows/ci.yml)
 Save file backup utility for the game They Are Billions
 
 ## A Word About Cheating
@@ -7,7 +7,7 @@ testing game mechanics as well as content creators.
 Generally I would recommend most people play the game without this tool. 
 
 This software makes backing up and restoring save files very easy and convenient when compared to doing it manually, 
-but it doesn't do anything you can't manually accomplish using file explorer.
+but it doesn't do anything that you can't accomplish manually.
 
 That said, using backups to circumvent the intentional save mechanics in They Are Billions is without question cheating.
 
@@ -15,24 +15,27 @@ If you don't want to cheat, then don't use this software.
 
 ## Installation
 
-### Prerequisits
+### Prerequisites
 
 #### Windows 11 (others might work)
-This software was designed for and tested on Windows 11. It is very likely that this software will function just fine on 
-other systems, but thus far it hasn't been tested. 
+This program was originally written to work on Windows 11. 
+We're working on testing other operating systems, and wish to make the program as portable as possible.
+It is very likely that this software will function just fine on 
+other systems, but more testing is needed.
 
 #### Python 3
 To run the software you will need to have Python 3 installed. 
-I designed the software to run on Python 3.9, but you may find that it runs on some older versions of Python 3. 
+I designed the software to run on Python 3.7+. 
 
-###Clone the Repository or Download the Files
+### Clone the Repository or Download the Files
 At the moment the only file that is needed to run the program is the `tabsave.py` file. Where you save/clone is 
 insignificant.
 
 ### Make tabsave Command (optional)
 The goal with this step is to make using the command as easy as possible from the command line. 
 
-This is nice if you would rather type `tabsave Survival1` instead of `python3 "C:\Users\<username>\tabsave\tabsave.py" Survival1`
+This is nice if you would rather type `tabsave Survival1` instead of 
+`python3 "C:\Users\<username>\tabsave\tabsave.py" Survival1`
 
 There are a number of ways to accomplish this. You could create an alias, a function, create a script (or batch file) 
 in your `bin` directory, or add the directory where you saved the script to your `Path` environment variable 
@@ -47,12 +50,16 @@ The following are going to assume you mannage to get things set up to run like a
 Otherwise, just replace `tabsave` with `python3 "C:\Users\<username>\tabsave\tabsave.py"` replacing 
 `"C:\Users\<username>\tabsave\tabsave.py"`with the absolute path to the tabsave python file.
 
+### Help
+To get a help message use the `-h` or `--help` option.
+
 ### Backup
 Create a backup of a specified save file.    
 *Note: To manually trigger the game to save you must exit the current game before running this command.*
-#### default mode
+
+#### Default Mode
 The default mode is to create a backup. 
-This means that if you only provide the save name the program will try to create a backup.
+This means that if you only provide the save name, the program will try to create a backup.
 
 To back up a save named `Survival1` simply run the following:  
 ```commandline
@@ -176,7 +183,7 @@ Number                          Path_to_Directory
 ```
 
 ### List All Saves
-You may want to list all saves. You can acheave this with the `-L` or `-list-all` option. 
+You may want to list all saves. You can achieve this with the `-L` or `-list-all` option. 
 
 Example:
 ```commandline
@@ -237,3 +244,36 @@ will output something like this:
 *                                *
 **********************************
 ```
+
+
+
+### Delete
+
+#### Delete a Specific Save's Backups
+If you need to delete all the backups for a specific save file, use the `--delete` option.
+
+Example: 
+```commandline
+tabsave Survival1 --delete
+```
+
+[comment]: <> (#### Delete specified backups)
+
+[comment]: <> (If you wish to only delete a subset of the save's backups, use the `-n` option.)
+
+[comment]: <> (Example - Delete backup 1: )
+
+[comment]: <> (```commandline)
+
+[comment]: <> (tabsave Survival1 --delete -n 1)
+
+[comment]: <> (```)
+
+[comment]: <> (Example - Delete backup 1 and 3: )
+
+[comment]: <> (```commandline)
+
+[comment]: <> (tabsave Survival1 --delete -n 1 -n 3)
+
+[comment]: <> (```)
+
