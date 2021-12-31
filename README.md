@@ -53,35 +53,42 @@ Otherwise, just replace `tabsave` with `python3 "C:\Users\<username>\tabsave\tab
 ### Help
 To get a help message use the `-h` or `--help` option.
 
+Example:
+```commandline
+tabsave --help
+```
+
+#### Subcommand Help
+To get a help message for a subcommand, use `-h` or `--help` with that subcommand.
+
+For example to get help for the `list` command use the following:
+```commandline
+tabsave list --help
+```
+
 ### Backup
 Create a backup of a specified save file.    
 *Note: To manually trigger the game to save you must exit the current game before running this command.*
 
-#### Default Mode
-The default mode is to create a backup. 
-This means that if you only provide the save name, the program will try to create a backup.
-
-To back up a save named `Survival1` simply run the following:  
+To create a backup of the save named Survival1, use the following:
 ```commandline
-tabsave Survival1
+tabsave backup Survival1
 ```
-#### Explicitly Invoke Backup
-If you prefer you can also use the `-b` or `--backup` options to explicitly invoke the backup command.
-
+or this alias:
 ```commandline
-tabsave Survival1 -b
-```
-```commandline
-tabsave Survival1 --backup
+tabsave b Survival1
 ```
 
 #### Backup with a Message
 Sometimes it is nice to label your backups. You can do this by using the `-m` or `--message` option.
+
+Examples:
+
 ```commandline
-tabsave Survival1 -m "Final Wave"
+tabsave backup Survival1 --message "Built First Sawmill"
 ```
 ```commandline
-tabsave Survival1 --message "Built First Sawmill"
+tabsave backup Survival1 -m "Final Wave"
 ```
 
 #### Declaring Backup Number
@@ -95,7 +102,7 @@ Occasionally you may wish to overwrite a specific backup. You can do this by usi
 The following will create backup number 3 or overwrite it if it already exists:
 
 ```commandline
-tabsave Survival1 -n 3
+tabsave backup Survival1 -n 3
 ```
 
 *Note: Backup number 0 is treated like a temprory backup and will be overwritten anytime the restore command is invoked.
@@ -108,12 +115,12 @@ This will overwrite the game's save file with a backup.
 With the default operation the highest backup number is selected. Unless the `-n` option was used during backup, it will be the
 most recent backup.
 
-To invoke the restore command you use the `-r` or `--restore` options
+Examples:
 ```commandline
-tabsave Survival1 -r
+tabsave restore Survival1
 ```
 ```commandline
-tabsave Survival1 --restore
+tabsave r Survival1
 ```
 
 #### Declaring Backup Number
@@ -127,16 +134,21 @@ To allow for corrective measures in case the restore command is accidentally inv
 0 of the save before actually overwriting the save. If you need to try recovering a save named `Survival1` that was 
 just overwritten with a backup, you would use the following command:
 ```commandline
-tabsave Survival1 -r -n 0
+tabsave restore Survival1 -n 0
 ```
 
 ### List Backups
-You can list all backups for a given save using the `-l` or `--list` option.
+You can list all backups for a given save using the `list` command.
 
 By default, it will only list the backup numbers that exist
 
+Example:
 ```commandline
-tabsave Survival1 -l
+tabsave list Survival1
+```
+or this alias
+```commandline
+tabsave l Survival1
 ```
 will output something like this:
 ```
@@ -149,10 +161,10 @@ Number
 ```
 #### Show Messages
 
-To show the paths use the `-m` or `--message` option.
+To show the messages use the `-m` or `--message` option.
 
 ```commandline
-tabsave Survival1 -l -m
+tabsave list Survival1 -m
 ```
 will output something like this:
 ```
@@ -170,7 +182,7 @@ Number         Message
 To show the paths use the `-p` or `--path` option.
 
 ```commandline
-tabsave Survival1 -l -p
+tabsave list Survival1 -p
 ```
 will output something like this:
 ```
@@ -183,11 +195,15 @@ Number                          Path_to_Directory
 ```
 
 ### List All Saves
-You may want to list all saves. You can achieve this with the `-L` or `-list-all` option. 
+You may want to list all saves. You can achieve this with the `list-all` command. 
 
 Example:
 ```commandline
-tabsave -L
+tabsave list-all
+```
+or this alias
+```commandline
+tabsave L
 ```
 will output something like this:
 ```
@@ -205,7 +221,7 @@ You can get more fields in this output with the `-p`/`--path` and `m`/`--message
 
 Example: 
 ```commandline
-tabsave -L -v -m
+tabsave list-all -v -m
 ```
 will output something like this:
 ```
@@ -250,11 +266,11 @@ will output something like this:
 ### Delete
 
 #### Delete a Specific Save's Backups
-If you need to delete all the backups for a specific save file, use the `--delete` option.
+If you need to delete all the backups for a specific save file, use the `delete` command.
 
 Example: 
 ```commandline
-tabsave Survival1 --delete
+tabsave delete Survival1
 ```
 
 [comment]: <> (#### Delete specified backups)
@@ -265,7 +281,7 @@ tabsave Survival1 --delete
 
 [comment]: <> (```commandline)
 
-[comment]: <> (tabsave Survival1 --delete -n 1)
+[comment]: <> (tabsave delete Survival1 -n 1)
 
 [comment]: <> (```)
 
@@ -273,7 +289,7 @@ tabsave Survival1 --delete
 
 [comment]: <> (```commandline)
 
-[comment]: <> (tabsave Survival1 --delete -n 1 -n 3)
+[comment]: <> (tabsave delete Survival1 -n 1 -n 3)
 
 [comment]: <> (```)
 
