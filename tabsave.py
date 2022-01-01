@@ -243,7 +243,7 @@ class GameSave:
         if not name or not isinstance(name, str):
             raise ValueError(f'name must be a non-empty string')
         if not GameSave.save_dir().is_dir():
-            raise NotADirectoryError(f'{self.save_dir()} is not a directory.')
+            raise NotADirectoryError(f'{GameSave.save_dir()} is not a directory.')
 
         self.backup_base_dir: Path = get_backup_root_dir() / name
         _mkdir_if_needed(self.backup_base_dir)
@@ -298,10 +298,10 @@ class GameSave:
                 raise NotADirectoryError(f'No backup directories found.')
         if n != 0:
             # create a temporary backup of the active save files in case this is used on accident. The temp index is 0.
-            self._copy_all(self.save_dir(), self.backup_base_dir / '0')
+            self._copy_all(GameSave.save_dir(), self.backup_base_dir / '0')
 
         # restore the backup.
-        self._copy_all(self.backup_base_dir / f'{n}', self.save_dir())
+        self._copy_all(self.backup_base_dir / f'{n}', GameSave.save_dir())
 
     def get_list(self,
                  verbose: Optional[bool] = None,
