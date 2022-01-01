@@ -475,8 +475,8 @@ def main(args=None) -> int:
     # set up the subparser for restoring a game file
     def restore_action(args):
         # TODO uncomment after implementing restore by message enhancement
-        # GameSave(args.save_name).backup(args.n, args.message)
-        GameSave(args.save_name).backup(args.n)  # TODO remove line when uncommenting the above line
+        # GameSave(args.save_name).restore(args.n, args.message)
+        GameSave(args.name).restore(args.n)  # TODO remove line when uncommenting the above line
 
     restore_parser = subparsers.add_parser('restore', aliases=['r'], help='Restore backup from backup.')
     restore_parser.set_defaults(func=restore_action)
