@@ -127,7 +127,7 @@ tabsave r Survival1
 If you need to restore a different backup than the one with the greatest number, you can use the `-n` option similar to 
 how it was used in the backup command.
 ```commandline
-tabsave Survival1 --restore -n 3
+tabsave restore Survival1 -n 3
 ```
 #### Automatic Backup During Restore
 To allow for corrective measures in case the restore command is accidentally invoked, we create a temporary backup number 
