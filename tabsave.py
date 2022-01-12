@@ -547,9 +547,13 @@ def main(args=None) -> int:
                                           help='Deletes all backups.')
     delete_parser.set_defaults(func=delete_all_action)
 
+    # parse the arguments
     args = p.parse_args(args)
 
+    # execute the command
     args.func(args)
+
+    # return success exit code
     return 0
 
 
