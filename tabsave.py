@@ -300,6 +300,12 @@ class GameSave:
             # create a temporary backup of the active save files in case this is used on accident. The temp index is 0.
             self._copy_all(GameSave.save_dir(), self.backup_base_dir / '0')
 
+        # delete all old files that will be replaced in case the backup doesn't include them all.
+        to_delete = (GameSave.save_dir() / name for name in self.base_filenames)
+        for item in to_delete:
+            if item.is_file():
+                item.unlink()
+
         # restore the backup.
         self._copy_all(self.backup_base_dir / f'{n}', GameSave.save_dir())
 
