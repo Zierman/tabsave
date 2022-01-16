@@ -34,8 +34,8 @@ insignificant.
 ### Make tabsave Command (optional)
 The goal with this step is to make using the command as easy as possible from the command line. 
 
-This is nice if you would rather type `tabsave Survival1` instead of 
-`python3 "C:\Users\<username>\tabsave\tabsave.py" Survival1`
+This is nice if you would rather type `tabsave backup Survival1` instead of 
+`python3 "C:\Users\<username>\tabsave\tabsave.py" backup Survival1`
 
 There are a number of ways to accomplish this. You could create an alias, a function, create a script (or batch file) 
 in your `bin` directory, or add the directory where you saved the script to your `Path` environment variable 
